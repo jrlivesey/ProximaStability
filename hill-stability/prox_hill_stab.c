@@ -1,6 +1,6 @@
 /**********************************************************************
  *                                                                    *
- * PROXIMA_HILL_STAB.C                                                *
+ * PROX_HILL_STAB.C                                                   *
  *                                                                    *
  * Authors: Rory Barnes (rory@astro.washington.edu)                   *
  *          Joseph Livesey (jlivesey@uw.edu)                          *
