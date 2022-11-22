@@ -12,6 +12,8 @@
  * of many possible configurations of the inner Proxima Centauri      *
  * system (planets d & b).                                            *
  *                                                                    *
+ * Original: https://github.com/RoryBarnes/HillStability/hill_stab.c  *
+ *                                                                    *
  **********************************************************************/
 
 #include <stdio.h>
