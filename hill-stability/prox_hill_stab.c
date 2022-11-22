@@ -1,20 +1,21 @@
-/**********************************************************************
- *                                                                    *
- * PROX_HILL_STAB.C                                                   *
- *                                                                    *
- * Authors: Rory Barnes (rory@astro.washington.edu)                   *
- *          Joseph Livesey (jlivesey@uw.edu)                          *
- *                                                                    *
- * To compile: gcc -o proxhillstab prox_hill_stab.c -lm               *
- *                                                                    *
- * Based on the Hill stability code employed in Barnes & Greenberg    *
- * (2006). This code has been modified to compute the Hill stability  *
- * of many possible configurations of the inner Proxima Centauri      *
- * system (planets d & b).                                            *
- *                                                                    *
- * Original: https://github.com/RoryBarnes/HillStability/hill_stab.c  *
- *                                                                    *
- **********************************************************************/
+/***********************************************************************
+ *                                                                     *
+ * PROX_HILL_STAB.C                                                    *
+ *                                                                     *
+ * Authors: Rory Barnes (rory@astro.washington.edu)                    *
+ *          Joseph Livesey (jlivesey@uw.edu)                           *
+ *                                                                     *
+ * To compile: gcc -o proxhillstab prox_hill_stab.c -lm                *
+ *                                                                     *
+ * Based on the Hill stability code employed in Barnes & Greenberg     *
+ * (2006). This code has been modified to compute the Hill stability   *
+ * of many possible configurations of the inner Proxima Centauri       *
+ * system (planets d & b).                                             *
+ *                                                                     *
+ * Original:                                                           *
+ * https://github.com/RoryBarnes/HillStability/blob/master/hill_stab.c *
+ *                                                                     *
+ ***********************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
