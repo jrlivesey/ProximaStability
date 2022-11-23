@@ -41,6 +41,6 @@ python megno-hyak.py inc
 
 will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Section 3.4). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Then, running the cells in `Proxima_MEGNO.ipynb` will produce the figures.
 
-## Using `REBOUND`
+## Using REBOUND
 
 Any difficulties encountered using `REBOUND` should be addressed by consulting the `REBOUND` [repository](https://github.com/hannorein/rebound) or [documentation](https://rebound.readthedocs.io/en/latest/). Neither author of this paper is involved in the development or maintenance of this excellent $N$-body code.
