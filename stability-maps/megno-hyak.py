@@ -222,7 +222,8 @@ def main(arg):
     Nsim = (100, 100)
     workers = []
     max_cores = mp.cpu_count()
-    cores = max_cores - max_cores % 10
+    # cores = max_cores - max_cores % 5
+    cores = max_cores
     for i in range(cores):
         if arg == 'ecc':
             workers.append(mp.Process(target=ecc_parameter_sweep, args=(Nsim, i+1, cores)))
