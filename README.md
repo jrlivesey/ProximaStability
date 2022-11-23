@@ -23,7 +23,7 @@ First, the data must be collected by executing `megno-hyak.py`. Please note that
 python megno-hyak.py ecc
 ```
 
-will start 10,000 `REBOUND` simulations varying the eccentricities of both planets (Section 3.2 in the paper).
+will start 10,000 REBOUND simulations varying the eccentricities of both planets (Section 3.2 in the paper).
 
 **Mass dependence.** Running
 
@@ -43,4 +43,4 @@ will start 10,000 simulations varying the planets' orbital inclinations with res
 
 ## Using REBOUND
 
-Any difficulties encountered using `REBOUND` should be addressed by consulting the `REBOUND` [repository](https://github.com/hannorein/rebound) or [documentation](https://rebound.readthedocs.io/en/latest/). Neither author of this paper is involved in the development or maintenance of this excellent $N$-body code.
+Any difficulties encountered using REBOUND should be addressed by consulting the REBOUND [repository](https://github.com/hannorein/rebound) or [documentation](https://rebound.readthedocs.io/en/latest/). Neither author of this paper is involved in the development or maintenance of this excellent $N$-body code.
