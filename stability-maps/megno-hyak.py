@@ -6,23 +6,55 @@ import multiprocessing as mp
 import astropy.units as u
 
 
-def makefile(name, serial_num):
+def makefile(file_name, serial_num):
     """
     Creates the data file that will contain all initial conditions and MEGNO
     values.
     """
+    global cwd
     global file
     cwd = pathlib.Path()
-    file = cwd / name
-    # if file.exists():
-    #     makefile(name, serial_num+1)
-    if not file.exists():
+    file = cwd / file_name
+    if file.exists():
+        pass
+    else:
         if serial_num == 1:
             f = open(file, 'x')
         else:
             name += '_' + str(serial_num)
             file = cwd / name
             f = open(file, 'x')
+
+
+def checkpoint(file_name):
+    """
+    If for some reason the simulations do not complete (as has happened to me),
+    this function can retrieve the data collected so far.
+    """
+    cp_data = []
+    cp_file = cwd / file_name
+    if cp_file.exists():
+        with open(cp_file, 'r') as f:
+            content = [line.strip().split() for line in f.readlines()]
+            for line in content:
+                if line:
+                    # m1 = line[0]
+                    # m2 = line[1]
+                    # a1 = line[2]
+                    # a2 = line[3]
+                    # e1 = line[4]
+                    # e2 = line[5]
+                    # i1 = line[6]
+                    # i2 = line[7]
+                    # Omega1 = line[8]
+                    # Omega2 = line[9]
+                    # pomega1 = line[10]
+                    # pomega2 = line[11]
+                    # megno = line[12]
+                    cp_data.append(tuple([float(l) for l in line]))
+        return cp_data
+    else:
+        return []
 
 
 def simulation_whfast(par):
@@ -67,7 +99,7 @@ def simulation_ias15(par):
     d_orbit = sim.particles[1].P
     b_orbit = sim.particles[2].P
     sim.dt = 0.05 * d_orbit # timestep is 5% of Proxima d's orbital period
-    sim.ri_ias15.min_dt = 1e-3 * sim.dt
+    sim.ri_ias15.min_dt = 1e-4 * sim.dt
     sim.move_to_com()
     sim.init_megno()
     sim.exit_max_distance = 20.
@@ -85,14 +117,16 @@ def ecc_parameter_sweep(Nsim, core_num, total_cores):
     """
     Nx, Ny = Nsim
     # Create data file
-    makefile('ecc-megno-bleh.txt', 1)
+    makefile('ecc-megno.txt', 1)
+    # Collect checkpointed data
+    cp_data = checkpoint('ecc-megno-cp.txt')
     # Determine the initial conditions for all simulations
     params = []
     ecc1 = None
     if core_num == total_cores - 1:
-        ecc1 = np.linspace(core_num*0.9/total_cores, 0.9, Nx-core_num*int(np.floor(Nx/total_cores)))
+        ecc1 = np.linspace(core_num*0.9/total_cores, 0.9, Nx-core_num*int(np.floor(Nx/total_cores))+1)[1:]
     else:
-        ecc1 = np.linspace(core_num*0.9/total_cores, (core_num+1)*0.9/total_cores, int(np.floor(Nx/total_cores)))
+        ecc1 = np.linspace(core_num*0.9/total_cores, (core_num+1)*0.9/total_cores, int(np.floor(Nx/total_cores))+1)[1:]
     ecc2 = np.linspace(0., 0.9, Ny)
     min_mass1 = float(0.26 * u.earthMass/u.solMass)
     min_mass2 = float(1.07 * u.earthMass/u.solMass)
@@ -112,17 +146,31 @@ def ecc_parameter_sweep(Nsim, core_num, total_cores):
         for e2 in ecc2:
             params.append((m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2))
     for par in params:
-        # Initialize simulation, integrate
+        in_cp_file = False
+        # Unpack list of parameters
         m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2 = par
-        megno = simulation_whfast(par)
-        if megno == 10.:
-            # Re-run with IAS15 to rule out numerical error
-            megno = simulation_ias15(par)
-        # Write output as line in data file (order doesn't matter; all active
-        # processes can contribute data simultaneously)
-        with open(file, 'a') as f:
-            f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
-                    a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+        # Read in checkpoint data, if available
+        for line in cp_data:
+            if np.abs(line[4] - e1) <= 1e-3 and np.abs(line[5] - e2) <= 1e-3:
+                megno = line[12]
+                with open(file, 'a') as f:
+                    f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                            a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+                    in_cp_file = True
+                print('copied data')
+                break
+        if not in_cp_file:
+            # Execute REBOUND simulation
+            print('running sim')
+            megno = simulation_whfast(par)
+            if megno == 10.:
+                # Re-run with IAS15 to rule out numerical error
+                megno = simulation_ias15(par)
+            # Write output as line in data file (order doesn't matter; all active
+            # processes can contribute data simultaneously)
+            with open(file, 'a') as f:
+                f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                        a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
 
 
 def mass_parameter_sweep(Nsim, core_num, total_cores):
@@ -132,13 +180,15 @@ def mass_parameter_sweep(Nsim, core_num, total_cores):
     Nx, Ny = Nsim
     # Create data file
     makefile('mass-megno.txt', 1)
+    # Collect checkpointed data
+    cp_data = checkpoint('mass-megno-cp.txt')
     # Determine the initial conditions for all simulations
     params = []
     mass1 = None
     if core_num == total_cores - 1:
-        mass1 = np.linspace(core_num*9.79/total_cores+0.21, 10., Nx-core_num*int(np.floor(Nx/total_cores)))
+        mass1 = np.linspace(core_num*9.79/total_cores+0.21, 10., Nx-core_num*int(np.floor(Nx/total_cores))+1)[1:]
     else:
-        mass1 = np.linspace(core_num*9.79/total_cores+0.21, (core_num+1)*9.79/total_cores+0.21, int(np.floor(Nx/total_cores)))
+        mass1 = np.linspace(core_num*9.79/total_cores+0.21, (core_num+1)*9.79/total_cores+0.21, int(np.floor(Nx/total_cores))+1)[1:]
     mass2 = np.linspace(1.01, 10., Ny)
     mass1 = [float(m1 * u.earthMass/u.solMass) for m1 in mass1]
     mass2 = [float(m2 * u.earthMass/u.solMass) for m2 in mass2]
@@ -156,17 +206,29 @@ def mass_parameter_sweep(Nsim, core_num, total_cores):
         for m2 in mass2:
             params.append((m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2))
     for par in params:
-        # Initialize simulation, integrate
+        in_cp_file = False
+        # Unpack list of parameters
         m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2 = par
-        megno = simulation_whfast(par)
-        if megno == 10.:
-            # Re-run with IAS15 to rule out numerical error
-            megno = simulation_ias15(par)
-        # Write output as line in data file (order doesn't matter; all active
-        # processes can contribute data simultaneously)
-        with open(file, 'a') as f:
-            f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
-                    a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+        # Read in checkpoint data, if available
+        for line in cp_data:
+            if np.abs(line[0] - m1) <= 1e-3 and np.abs(line[1] - m2) <= 1e-3:
+                megno = line[12]
+                with open(file, 'a') as f:
+                    f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                            a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+                    in_cp_file = True
+                break
+        if not in_cp_file:
+            # Execute REBOUND simulation
+            megno = simulation_whfast(par)
+            if megno == 10.:
+                # Re-run with IAS15 to rule out numerical error
+                megno = simulation_ias15(par)
+            # Write output as line in data file (order doesn't matter; all active
+            # processes can contribute data simultaneously)
+            with open(file, 'a') as f:
+                f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                        a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
 
 
 def inc_parameter_sweep(Nsim, core_num, total_cores):
@@ -176,13 +238,15 @@ def inc_parameter_sweep(Nsim, core_num, total_cores):
     Nx, Ny = Nsim
     # Create data file
     makefile('inc-megno.txt', 1)
+    # Collect checkpointed data
+    cp_data = checkpoint('inc-megno-cp.txt')
     # Determine the initial conditions for all simulations
     params = []
     inc1 = None
     if core_num == total_cores - 1:
-        inc1 = np.linspace(core_num*np.pi/total_cores, np.pi, Nx-core_num*int(np.floor(Nx/total_cores)))
+        inc1 = np.linspace(core_num*np.pi/total_cores, np.pi, Nx-core_num*int(np.floor(Nx/total_cores))+1)[1:]
     else:
-        inc1 = np.linspace(core_num*np.pi/total_cores, (core_num+1)*np.pi/total_cores, int(np.floor(Nx/total_cores)))
+        inc1 = np.linspace(core_num*np.pi/total_cores, (core_num+1)*np.pi/total_cores, int(np.floor(Nx/total_cores))+1)[1:]
     inc2 = np.linspace(0., np.pi, Ny)
     min_mass1 = float(0.26 * u.earthMass/u.solMass)
     min_mass2 = float(1.07 * u.earthMass/u.solMass)
@@ -202,17 +266,29 @@ def inc_parameter_sweep(Nsim, core_num, total_cores):
         for i2 in inc2:
             params.append((m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2))
     for par in params:
-        # Initialize simulation, integrate
+        in_cp_file = False
+        # Unpack list of parameters
         m1, m2, a1, a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2 = par
-        megno = simulation_whfast(par)
-        if megno == 10.:
-            # Re-run with IAS15 to rule out numerical error
-            megno = simulation_ias15(par)
-        # Write output as line in data file (order doesn't matter; all active
-        # processes can contribute data simultaneously)
-        with open(file, 'a') as f:
-            f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
-                    a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+        # Read in checkpoint data, if available
+        for line in cp_data:
+            if np.abs(line[6] - i1) <= 1e-3 and np.abs(line[7] - i2) <= 1e-3:
+                megno = line[12]
+                with open(file, 'a') as f:
+                    f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                            a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
+                    in_cp_file = True
+                break
+        if not in_cp_file:
+            # Execute REBOUND simulation
+            megno = simulation_whfast(par)
+            if megno == 10.:
+                # Re-run with IAS15 to rule out numerical error
+                megno = simulation_ias15(par)
+            # Write output as line in data file (order doesn't matter; all active
+            # processes can contribute data simultaneously)
+            with open(file, 'a') as f:
+                f.write('{} {} {} {} {} {} {} {} {} {} {} {} {}\n'.format(m1, m2, a1,
+                        a2, e1, e2, i1, i2, Omega1, Omega2, pomega1, pomega2, megno))
 
 
 def main(arg):
@@ -222,15 +298,15 @@ def main(arg):
     Nsim = (100, 100)
     workers = []
     max_cores = mp.cpu_count()
-    # cores = max_cores - max_cores % 5
-    cores = max_cores
+    cores = max_cores - max_cores % 5
+    # cores = max_cores
     for i in range(cores):
         if arg == 'ecc':
-            workers.append(mp.Process(target=ecc_parameter_sweep, args=(Nsim, i+1, cores)))
+            workers.append(mp.Process(target=ecc_parameter_sweep, args=(Nsim, i, cores)))
         elif arg == 'mass':
-            workers.append(mp.Process(target=mass_parameter_sweep, args=(Nsim, i+1, cores)))
+            workers.append(mp.Process(target=mass_parameter_sweep, args=(Nsim, i, cores)))
         elif arg == 'inc':
-            workers.append(mp.Process(target=inc_parameter_sweep, args=(Nsim, i+1, cores)))
+            workers.append(mp.Process(target=inc_parameter_sweep, args=(Nsim, i, cores)))
         else:
             print('Invalid keyword: use \'ecc\', \'mass\', or \'inc\'.')
             exit(1)
