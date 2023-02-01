@@ -11,7 +11,7 @@ gcc -o proxhillstab prox_hill_stab.c -lm
 ./proxhillstab
 ```
 
-This will create two (large) data files containing the input parameters and Hill stability determinations for one million configurations of the system. Then, one may perform the analysis outlined in `Hill_Stability.ipynb`.
+This will create two (large) data files containing the input parameters and Hill stability determinations for one million configurations of the system. Then, one may perform the analysis outlined in `Hill-Stability.ipynb`.
 
 ## Stability maps
 
@@ -39,7 +39,7 @@ will start 10,000 simulations varying the planetary masses (Set II).
 python megno-hyak.py inc
 ```
 
-will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Set III). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Running the cells in `Proxima_MEGNO.ipynb` will produce the figures.
+will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Set III). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Running the cells in `Proxima-MEGNO.ipynb` will produce the figures.
 
 ## Using REBOUND
 
