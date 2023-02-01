@@ -11,7 +11,7 @@ gcc -o proxhillstab prox_hill_stab.c -lm
 ./proxhillstab
 ```
 
-This will create two (large) data files containing the input parameters and Hill stability determinations for one million configurations of the system. Then, one may perform the analysis outlined in `Hill_Stability.ipynb`.
+This will create two (large) data files containing the input parameters and Hill stability determinations for one million configurations of the system. Then, one may perform the analysis outlined in `Hill-Stability.ipynb`.
 
 ## Stability maps
 
