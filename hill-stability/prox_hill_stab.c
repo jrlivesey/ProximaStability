@@ -22,6 +22,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #define dot(a, b)   (a[0]*b[0]+a[1]*b[1]+a[2]*b[2])
 #define unif(a, b)  rand()/((double) RAND_MAX) * (b - a) + a
 
@@ -44,6 +45,8 @@ char *sLower(char cString[]) {
   return cString;
 }
 
+
+
 void hel_bar(double **hel,double **bar,double *ms,double *m,int n) {
    int i,p;
 
@@ -59,47 +62,52 @@ void hel_bar(double **hel,double **bar,double *ms,double *m,int n) {
    }
 }
 
-void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin) {
+
+
+void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only) {
   double obs_inc;
   /* This function was added for the Proxima paper. Sets random inputs instead
   reading them from an input file. */
 
-  *origin  = 1;                     // body-centric coordinate system
-  obs_inc  = (rand() % 30 + 3) * M_PI/180; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
-  p1->a    = 0.029;               // Planet d semi-major axis
-  p1->e    = unif(0., 0.9);                  // Planet d eccentricity
-  p1->aper = unif(0., 360.);          // Planet d argument of pericenter (any)
-  p1->i    = unif(0., 15.);           // Planet d inclination (range 0–15 deg)
-  p1->lasc = unif(0., 360.);          // Planet d longitude of ascending node (any)
-  p1->mean_an = unif(0., 360.);
-  p2->a    = 0.049;               // Planet b semi-major axis
-  p2->e    = unif(0., 0.9);                  // Planet b eccentricity
-  p2->aper = unif(0., 360.);          // Planet b argument of pericenter (any)
-  p2->i    = unif(0., 15.);           // Planet b inclination (range 0–15 deg)
-  p2->lasc = unif(0., 360.);          // Planet b longitude of ascending node (any)
-  p2->mean_an = unif(0., 360.);
-  m[0]     = 0.12;                  // Star mass (in solar masses)
-  m[1]     = unif(0.21, 0.31) / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
-  m[2]     = unif(1.01, 1.13) / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
-
-  /* Varying eccentricity only */
-  // *origin  = 1;                     // body-centric coordinate system
-  // obs_inc  = 133.; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
-  // p1->a    = 0.029;               // Planet d semi-major axis
-  // p1->e    = unif(0., 0.9);                  // Planet d eccentricity
-  // p1->aper = 0.;          // Planet d argument of pericenter (any)
-  // p1->i    = 0.;           // Planet d inclination (range 0–15 deg)
-  // p1->lasc = 0.;          // Planet d longitude of ascending node (any)
-  // p1->mean_an = 0.;
-  // p2->a    = 0.049;               // Planet b semi-major axis
-  // p2->e    = unif(0., 0.9);                  // Planet b eccentricity
-  // p2->aper = 180.;          // Planet b argument of pericenter (any)
-  // p2->i    = 0.;           // Planet b inclination (range 0–15 deg)
-  // p2->lasc = 0.;          // Planet b longitude of ascending node (any)
-  // p2->mean_an = 180.;
-  // m[0]     = 0.12;                  // Star mass (in solar masses)
-  // m[1]     = 0.26 / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
-  // m[2]     = 1.07 / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
+  if (ecc_only) {
+    /* Varying eccentricity only */
+    *origin  = 1;                     // body-centric coordinate system
+    obs_inc  = 133.; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
+    p1->a    = 0.029;               // Planet d semi-major axis
+    p1->e    = unif(0., 0.9);                  // Planet d eccentricity
+    p1->aper = 0.;          // Planet d argument of pericenter (any)
+    p1->i    = 0.;           // Planet d inclination (range 0–15 deg)
+    p1->lasc = 0.;          // Planet d longitude of ascending node (any)
+    p1->mean_an = 0.;
+    p2->a    = 0.049;               // Planet b semi-major axis
+    p2->e    = unif(0., 0.9);                  // Planet b eccentricity
+    p2->aper = 180.;          // Planet b argument of pericenter (any)
+    p2->i    = 0.;           // Planet b inclination (range 0–15 deg)
+    p2->lasc = 0.;          // Planet b longitude of ascending node (any)
+    p2->mean_an = 180.;
+    m[0]     = 0.12;                  // Star mass (in solar masses)
+    m[1]     = 0.26 / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
+    m[2]     = 1.07 / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
+  } else {
+    /* Full parameter sweep */
+    *origin  = 1;                     // body-centric coordinate system
+    obs_inc  = (rand() % 30 + 3) * M_PI/180; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
+    p1->a    = 0.029;               // Planet d semi-major axis
+    p1->e    = unif(0., 0.9);                  // Planet d eccentricity
+    p1->aper = unif(0., 360.);          // Planet d argument of pericenter (any)
+    p1->i    = unif(0., 15.);           // Planet d inclination (range 0–15 deg)
+    p1->lasc = unif(0., 360.);          // Planet d longitude of ascending node (any)
+    p1->mean_an = unif(0., 360.);
+    p2->a    = 0.049;               // Planet b semi-major axis
+    p2->e    = unif(0., 0.9);                  // Planet b eccentricity
+    p2->aper = unif(0., 360.);          // Planet b argument of pericenter (any)
+    p2->i    = unif(0., 15.);           // Planet b inclination (range 0–15 deg)
+    p2->lasc = unif(0., 360.);          // Planet b longitude of ascending node (any)
+    p2->mean_an = unif(0., 360.);
+    m[0]     = 0.12;                  // Star mass (in solar masses)
+    m[1]     = unif(0.21, 0.31) / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
+    m[2]     = unif(1.01, 1.13) / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
+  }
 
   /* Varying inclination only */
   // *origin  = 1;                     // body-centric coordinate system
@@ -133,6 +141,8 @@ void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin) {
   m[1]     *= MEARTH;
   m[2]     *= MEARTH;
 }
+
+
 
 void cartes(double *x, double *v, ELEMS elem_ptr,double mu) {
   double a,e,m,cosi,sini,cos_lasc,sin_lasc,cos_aper,sin_aper;
@@ -216,6 +226,8 @@ void cartes(double *x, double *v, ELEMS elem_ptr,double mu) {
   v[2] = n1*xi+n2*eta;
 }
 
+
+
 double GetExact(double **r,double **v,double *m) {
   double c,h,ke;
   double br[3][3],bv[3][3];
@@ -284,6 +296,8 @@ double GetExact(double **r,double **v,double *m) {
   return p_a/crit;
 }
 
+
+
 double GetApprox(ELEMS p1,ELEMS p2,double *m) {
   double mu[2],zeta,gamma[2],lambda,dTotMass;
   double p_a,crit;
@@ -302,20 +316,22 @@ double GetApprox(ELEMS p1,ELEMS p2,double *m) {
   return p_a/crit;
 }
 
-void write_output(int line_num, char exact[100], char approx[100],
-                  char d_mass[100], char b_mass[100], char d_semi[100],
-                  char b_semi[100], char d_ecc[100], char b_ecc[100],
-                  char d_aper[100], char b_aper[100], char d_inc[100],
-                  char b_inc[100], char d_lasc[100], char b_lasc[100],
-                  char d_mean_an[100], char b_mean_an[100]) {
+
+
+void write_output(char filename[], int line_num, char exact[],
+                  char approx[], char d_mass[], char b_mass[],
+                  char d_semi[], char b_semi[], char d_ecc[],
+                  char b_ecc[], char d_aper[], char b_aper[],
+                  char d_inc[], char b_inc[], char d_lasc[],
+                  char b_lasc[], char d_mean_an[], char b_mean_an[]) {
   /* This function was added for the Proxima paper. Outputs exact and
   approximate Hill stability & orbital elements to a data file. */
   FILE *fp;
 
   if (line_num == 0)
-    fp = fopen("proxhillstab.txt", "w+");
+    fp = fopen(filename, "w+");
   else
-    fp = fopen("proxhillstab.txt", "a");
+    fp = fopen(filename, "a");
   fprintf(fp, "%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s %s\n", exact, approx,
           d_mass, b_mass, d_semi, b_semi, d_ecc, b_ecc, d_aper, b_aper, d_inc,
           b_inc, d_lasc, b_lasc, d_mean_an, b_mean_an);
@@ -324,31 +340,24 @@ void write_output(int line_num, char exact[100], char approx[100],
 
 
 
-int main(int argc, char *argv[]) {
-  double **x,**v,*m;
-  double **bax,**bav;
+void calc_hill_stab(char filename[], bool ecc_only) {
+  double **x, **v, *m;
+  double **bax, **bav;
   double *ms;
-  double ratio,e1,e2;
-  ELEMS p1,p2;
+  double ratio, e1, e2;
+  ELEMS p1, p2;
   double exact, approx;
   char sExact[100], sApprox[100], d_mass[100], b_mass[100], d_semi[100],
        b_semi[100], d_ecc[100], b_ecc[100], d_aper[100], b_aper[100], d_inc[100],
        b_inc[100], d_lasc[100], b_lasc[100], d_mean_an[100], b_mean_an[100];
   int line_num;
-  int i,j,origin;
-
-  /* Test of the unif() function */
-  // char random[100];
-  // for (i=0; i<10; i++) {
-  //   sprintf(random, "%.5lf", unif(0, 0.9));
-  //   fprintf(stdout, "%s\n", random);
-  // }
-  // exit(0);
-
-  if (argc != 1) {
-    fprintf(stderr,"Usage: %s\n", argv[0]);
-    exit(1);
-  }
+  int i, j, origin;
+  /* This function was re-factored for the Proxima paper. It performs the
+  stability calculation and writes to a file, with the input parameters and
+  target file determined by the value of "random". If random == 1, random
+  orbital elements are used, and the output is written to proxhillstab.txt. If
+  random == 0, the eccentricity space of Fig. 1 is used, and the output is
+  written to proxhillstabecc.txt. */
 
   m=malloc(3*sizeof(double));
   x=malloc(3*sizeof(double*));
@@ -366,14 +375,12 @@ int main(int argc, char *argv[]) {
   line_num = 0;
   for (j=0; j<1000000; j++) {
     // fprintf(stdout, "%i\n", line_num);
-    set_vals(&p1, &p2, m, &origin);
-
+    set_vals(&p1, &p2, m, &origin, ecc_only);
     /* bodycentric coordinates */
     for (i=0;i<3;i++) {
       x[0][i]=0.0;
       v[0][i]=0.0;
     }
-
     cartes(x[1],v[1],p1,m[0]*BIGG);
     cartes(x[2],v[2],p2,m[0]*BIGG);
     if (origin) {
@@ -410,11 +417,23 @@ int main(int argc, char *argv[]) {
     sprintf(d_mean_an, "%.5lf", p1.mean_an);
     sprintf(b_mean_an, "%.5lf", p2.mean_an);
 
-    write_output(line_num, sExact, sApprox, d_mass, b_mass, d_semi, b_semi,
-                 d_ecc, b_ecc, d_aper, b_aper, d_inc, b_inc, d_lasc, b_lasc,
-                 d_mean_an, b_mean_an);
+    write_output(filename, line_num, sExact, sApprox, d_mass, b_mass, d_semi,
+                 b_semi, d_ecc, b_ecc, d_aper, b_aper, d_inc, b_inc, d_lasc,
+                 b_lasc, d_mean_an, b_mean_an);
     line_num += 1;
   }
+}
+
+
+
+int main(int argc, char *argv[]) {
+  if (argc != 1) {
+    fprintf(stderr,"Usage: %s\n", argv[0]);
+    exit(1);
+  }
+
+  calc_hill_stab("proxhillstab.txt", 0);
+  calc_hill_stab("proxhillstabecc.txt", 1);
 
   return 0;
 }
