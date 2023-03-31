@@ -38,19 +38,6 @@ def checkpoint(file_name):
             content = [line.strip().split() for line in f.readlines()]
             for line in content:
                 if line:
-                    # m1 = line[0]
-                    # m2 = line[1]
-                    # a1 = line[2]
-                    # a2 = line[3]
-                    # e1 = line[4]
-                    # e2 = line[5]
-                    # i1 = line[6]
-                    # i2 = line[7]
-                    # Omega1 = line[8]
-                    # Omega2 = line[9]
-                    # pomega1 = line[10]
-                    # pomega2 = line[11]
-                    # megno = line[12]
                     cp_data.append(tuple([float(l) for l in line]))
         return cp_data
     else:
@@ -130,8 +117,8 @@ def ecc_parameter_sweep(Nsim, core_num, total_cores):
     ecc2 = np.linspace(0., 0.9, Ny)
     min_mass1 = float(0.26 * u.earthMass/u.solMass)
     min_mass2 = float(1.07 * u.earthMass/u.solMass)
-    obs_inc1 = 133.
-    obs_inc2 = 133.
+    obs_inc1 = 133. * np.pi/180.
+    obs_inc2 = 133. * np.pi/180.
     m1 = min_mass1 / np.sin(obs_inc1)
     m2 = min_mass2 / np.sin(obs_inc2)
     a1 = 0.029
@@ -250,8 +237,8 @@ def inc_parameter_sweep(Nsim, core_num, total_cores):
     inc2 = np.linspace(0., np.pi, Ny)
     min_mass1 = float(0.26 * u.earthMass/u.solMass)
     min_mass2 = float(1.07 * u.earthMass/u.solMass)
-    obs_inc1 = 133.
-    obs_inc2 = 133.
+    obs_inc1 = 133. * np.pi/180.
+    obs_inc2 = 133. * np.pi/180.
     m1 = min_mass1 / np.sin(obs_inc1)
     m2 = min_mass2 / np.sin(obs_inc2)
     a1 = 0.029
