@@ -64,7 +64,7 @@ void hel_bar(double **hel,double **bar,double *ms,double *m,int n) {
 
 
 
-void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only) {
+void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only, bool inc_only) {
   double obs_inc;
   /* This function was added for the Proxima paper. Sets random inputs instead
   reading them from an input file. */
@@ -83,6 +83,25 @@ void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only) {
     p2->e    = unif(0., 0.9);                  // Planet b eccentricity
     p2->aper = 180.;          // Planet b argument of pericenter (any)
     p2->i    = 0.;           // Planet b inclination (range 0–15 deg)
+    p2->lasc = 0.;          // Planet b longitude of ascending node (any)
+    p2->mean_an = 180.;
+    m[0]     = 0.12;                  // Star mass (in solar masses)
+    m[1]     = 0.26 / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
+    m[2]     = 1.07 / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
+  } else if (inc_only) {
+    /* Varying inclination only */
+    *origin  = 1;                     // body-centric coordinate system
+    obs_inc  = 133.; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
+    p1->a    = 0.029;               // Planet d semi-major axis
+    p1->e    = 0.;                  // Planet d eccentricity
+    p1->aper = 0.;          // Planet d argument of pericenter (any)
+    p1->i    = unif(0., PI);           // Planet d inclination (range 0–15 deg)
+    p1->lasc = 0.;          // Planet d longitude of ascending node (any)
+    p1->mean_an = 0.;
+    p2->a    = 0.049;               // Planet b semi-major axis
+    p2->e    = 0.;                  // Planet b eccentricity
+    p2->aper = 180.;          // Planet b argument of pericenter (any)
+    p2->i    = unif(0., PI);           // Planet b inclination (range 0–15 deg)
     p2->lasc = 0.;          // Planet b longitude of ascending node (any)
     p2->mean_an = 180.;
     m[0]     = 0.12;                  // Star mass (in solar masses)
@@ -340,7 +359,7 @@ void write_output(char filename[], int line_num, char exact[],
 
 
 
-void calc_hill_stab(char filename[], bool ecc_only) {
+void calc_hill_stab(char filename[], bool ecc_only, bool inc_only) {
   double **x, **v, *m;
   double **bax, **bav;
   double *ms;
@@ -375,7 +394,7 @@ void calc_hill_stab(char filename[], bool ecc_only) {
   line_num = 0;
   for (j=0; j<1000000; j++) {
     // fprintf(stdout, "%i\n", line_num);
-    set_vals(&p1, &p2, m, &origin, ecc_only);
+    set_vals(&p1, &p2, m, &origin, ecc_only, inc_only);
     /* bodycentric coordinates */
     for (i=0;i<3;i++) {
       x[0][i]=0.0;
@@ -432,8 +451,9 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  calc_hill_stab("proxhillstab.txt", 0);
-  calc_hill_stab("proxhillstabecc.txt", 1);
+  calc_hill_stab("proxhillstab.txt", 0, 0);
+  calc_hill_stab("proxhillstabecc.txt", 1, 0);
+  calc_hill_stab("proxhillstabinc.txt", 0, 1);
 
   return 0;
 }
