@@ -41,6 +41,10 @@ python megno-hyak.py inc
 
 will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Set III). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Running the cells in `Proxima-MEGNO.ipynb` will produce the figures.
 
+## Secular evolution
+
+The six `VPLanet` simulations in `secular-evolution/vplanet-sims` must first be run. Note that these are computationally expensive, and will require multiple weeks of wall clock time to finish. Then, running the script `proxima-b-evols.py` will produce the secular evolution figure from the paper.
+
 ## Using REBOUND
 
 Any difficulties encountered using REBOUND should be addressed by consulting the REBOUND [repository](https://github.com/hannorein/rebound) or [documentation](https://rebound.readthedocs.io/en/latest/). Neither author of this paper is involved in the development or maintenance of this excellent $N$-body code.
