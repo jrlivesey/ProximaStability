@@ -1,0 +1,31 @@
+# Proxima c values taken from Damasso et al. 2020 or else Benedict & McArthur 2020
+sName		c			# Body's name
+saModules 	distorb    		# Modules
+#bForceEqSpin	0
+
+# Physical Properties
+sMassRad	Sotin07
+dMass		-6.0	  	# Mass, negative -> Earth masses
+dObliquity	0.0             # Obliquity (degrees)
+
+# Orbital Properties
+dEcc		0.01		# Eccentricity
+#dSemi          0.05            # Semi-major axis, negative -> AU
+dOrbPeriod -1881.91952891
+
+# Eqtide Properties
+#bDiscreteRot   0
+#dTidalQ         100             # Tidal phase lag
+#dTidalTau      -630
+#dK2             0.3             # Love number of degree 2
+#dH2             0.62            # Tidal Love number of degree 2
+#dMaxLockDiff   0.01            # Tidally lock when spin period is within 1% of orbital period
+#saTidePerts     proxima         # Tidally interacting with star
+
+# DISTORB Parameters
+dInc            0            # Orbital inclination (degrees)      
+dLongA 290.315915471
+dArgP 141.335810079
+
+#Output
+saOutputOrder Time Eccentricity Inc SemiMajorAxis MeanMotion LongA LongP ArgP

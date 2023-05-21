@@ -1,0 +1,28 @@
+# Proxima d values taken from Faria et al. 2022
+sName		d			# Body's name
+saModules 	eqtide distorb 		# Modules
+bForceEqSpin	1
+# Physical Properties
+sMassRad	Sotin07
+dMass -0.39862329306806804
+dObliquity	0.0             # Obliquity (degrees)
+#dRotPeriod	-5.122
+# Orbital Properties
+dEcc 0.0907129347973946
+#dSemi          0.02885            # Semi-major axis, negative -> AU
+dOrbPeriod -5.16909906271
+# Eqtide Properties
+#bDiscreteRot   0
+dTidalQ 322.54607776
+#dTidalTau      -630
+dK2             0.3             # Love number of degree 2
+#dH2             0.62            # Tidal Love number of degree 2
+#dMaxLockDiff   0.01            # Tidally lock when spin period is within 1% of orbital period
+saTidePerts     proxima         # Tidally interacting with star
+# DISTORB Parameters
+dInc 5.354454172097974
+dLongA 273.626354885
+dArgP 297.737312751
+bInvPlane	1
+#Output
+saOutputOrder Time Eccentricity Inc SemiMajorAxis MeanMotion LongA LongP ArgP Obliquity

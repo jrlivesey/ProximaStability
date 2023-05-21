@@ -10,7 +10,8 @@
  * Based on the Hill stability code employed in Barnes & Greenberg     *
  * (2006). This code has been modified to compute the Hill stability   *
  * of many possible configurations of the inner Proxima Centauri       *
- * system (planets d & b).                                             *
+ * system (planets d & b), and to thence print the output to a data    *
+ * file.                                                               *
  *                                                                     *
  * Original:                                                           *
  * https://github.com/RoryBarnes/HillStability/blob/master/hill_stab.c *
@@ -95,14 +96,14 @@ void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only, bool 
     p1->a    = 0.029;               // Planet d semi-major axis
     p1->e    = 0.;                  // Planet d eccentricity
     p1->aper = 0.;          // Planet d argument of pericenter (any)
-    p1->i    = unif(0., PI);           // Planet d inclination (range 0–15 deg)
+    p1->i    = unif(0., 180.);           // Planet d inclination
     p1->lasc = 0.;          // Planet d longitude of ascending node (any)
     p1->mean_an = 0.;
     p2->a    = 0.049;               // Planet b semi-major axis
     p2->e    = 0.;                  // Planet b eccentricity
     p2->aper = 180.;          // Planet b argument of pericenter (any)
-    p2->i    = unif(0., PI);           // Planet b inclination (range 0–15 deg)
-    p2->lasc = 0.;          // Planet b longitude of ascending node (any)
+    p2->i    = unif(0., 180.);           // Planet b inclination
+    p2->lasc = 180.;          // Planet b longitude of ascending node (any)
     p2->mean_an = 180.;
     m[0]     = 0.12;                  // Star mass (in solar masses)
     m[1]     = 0.26 / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
@@ -115,37 +116,20 @@ void set_vals(ELEMS *p1, ELEMS *p2, double *m, int *origin, bool ecc_only, bool 
     p1->e    = unif(0., 0.9);                  // Planet d eccentricity
     p1->aper = unif(0., 360.);          // Planet d argument of pericenter (any)
     p1->i    = unif(0., 15.);           // Planet d inclination (range 0–15 deg)
-    p1->lasc = unif(0., 360.);          // Planet d longitude of ascending node (any)
+    p1->lasc = 0.;          // Planet d longitude of ascending node (any)
     p1->mean_an = unif(0., 360.);
     p2->a    = 0.049;               // Planet b semi-major axis
     p2->e    = unif(0., 0.9);                  // Planet b eccentricity
     p2->aper = unif(0., 360.);          // Planet b argument of pericenter (any)
     p2->i    = unif(0., 15.);           // Planet b inclination (range 0–15 deg)
-    p2->lasc = unif(0., 360.);          // Planet b longitude of ascending node (any)
+    p2->lasc = 180.;          // Planet b longitude of ascending node (any)
     p2->mean_an = unif(0., 360.);
     m[0]     = 0.12;                  // Star mass (in solar masses)
     m[1]     = unif(0.21, 0.31) / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
     m[2]     = unif(1.01, 1.13) / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
   }
 
-  /* Varying inclination only */
-  // *origin  = 1;                     // body-centric coordinate system
-  // obs_inc  = 133.; // Sky plane inclination (range 3–33 deg, centered on Proxima c inclination: 18º)
-  // p1->a    = 0.029;               // Planet d semi-major axis
-  // p1->e    = 0.7;                  // Planet d eccentricity
-  // p1->aper = 0.;          // Planet d argument of pericenter (any)
-  // p1->i    = unif(0., PI);           // Planet d inclination (range 0–15 deg)
-  // p1->lasc = 0.;          // Planet d longitude of ascending node (any)
-  // p1->mean_an = 0.;
-  // p2->a    = 0.049;               // Planet b semi-major axis
-  // p2->e    = 0.7;                  // Planet b eccentricity
-  // p2->aper = 180.;          // Planet b argument of pericenter (any)
-  // p2->i    = unif(0., PI);           // Planet b inclination (range 0–15 deg)
-  // p2->lasc = 0.;          // Planet b longitude of ascending node (any)
-  // p2->mean_an = 180.;
-  // m[0]     = 0.12;                  // Star mass (in solar masses)
-  // m[1]     = 0.26 / sin(obs_inc);   // Proxima d mass (in earth masses, M*sin(i) = 0.26 ± 0.05)
-  // m[2]     = 1.07 / sin(obs_inc);   // Proxima b mass (in earth masses, M*sin(i) = 1.07 ± 0.06)
+
 
   /* Unit conversions */
   p1->a    *= AUCM;

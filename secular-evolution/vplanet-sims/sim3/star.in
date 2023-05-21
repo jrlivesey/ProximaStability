@@ -1,0 +1,21 @@
+# Mass value from Kervella et al. 2017
+
+sName		proxima		# Body's name
+saModules 	eqtide        	# Modules
+
+# Physical Parameters
+dMass		    0.12        # Mass, negative -> Earth masses
+dAge                1.0e6       # Assume star is 1 Myr old when disk disperses
+dRadGyra	    0.45	# Radius of gyration (moment of inertia constant)
+
+# The first body in the saBodyFiles list must be the central mass.
+# This body carries no orbital information => the coordinate system is bodycentric.
+
+# EQTIDE Parameters
+dTidalQ		    1.0e6	# Tidal phase lag
+#dTidalTau	    -1
+dK2		    0.5		# Love number of degree 2
+sTideModel	    p2		# Tidal model, p2=CPL, t8=CTL
+saTidePerts	    d b		# Body name(s) of tidal perturbers
+
+saOutputOrder	Time TotEnergy -TotAngMom
