@@ -1,6 +1,6 @@
 # ProximaStability
 
-The code in this repository can be used to reproduce the results of Livesey & Barnes (forthcoming). The following instructions take you through
+The code in this repository can be used to reproduce the results of Livesey, Barnes & Deitrick (2024). The following instructions take you through the steps of reproducing all figures and quantitative results in the paper.
 
 ## Hill stability
 
