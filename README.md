@@ -39,7 +39,7 @@ will start 10,000 simulations varying the planetary masses (Set II).
 python megno-hyak.py inc
 ```
 
-will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Set III). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Running the cells in `Proxima-MEGNO.ipynb` will produce the figures.
+will start 10,000 simulations varying the planets' orbital inclinations with respect to the fundamental plane of the system (Set III). Once these jobs have completed, there will be three text files containing the relevant data from the 30,000 simulations. Running the cells in `proxima-stability.ipynb` will produce the figures (and more).
 
 ## Secular evolution
 
