@@ -1,0 +1,30 @@
+# Proxima b values taken from Faria et al. 2022
+sName		b			# Body's name
+saModules 	eqtide distorb    	# Modules
+bForceEqSpin	1
+# Physical Properties
+sMassRad	Sotin07
+dMass -1.2313946548536414
+#dRotPeriod	-11.1868  		# Rotation period, negative -> days
+dObliquity	0.0             # Obliquity (degrees)
+# Orbital Properties
+dEcc 0.1222246312747925
+#dSemi           -0.04856            # Semi-major axis, negative -> AU
+dOrbPeriod -11.4510984282
+# Eqtide Properties
+#bDiscreteRot	0
+dTidalQ 15.9492057501
+#dTidalTau	-630
+dK2             0.3             # Love number of degree 2
+#dH2		0.62		# Tidal Love number of degree 2
+#dMaxLockDiff   0.01            # Tidally lock when spin period is within 1% of orbital period
+saTidePerts     proxima         # Tidally interacting with star
+# DISTORB Parameters
+dInc 8.76221911492604
+dLongA 264.701835312
+dArgP 337.73207486
+sOrbitModel     rd4             # Use 4th Order disturbing function model
+# I USED A RANDOM NUMBER GENERATOR FOR THE LONGITUDES OF PERIASTRON (numpy.random.randint(360))
+#Output
+saOutputOrder Time Eccentricity Inc SemiMajorAxis MeanMotion LongA LongP ArgP $
+Obliquity -RotPer OrbPeriod #CaptureProb
