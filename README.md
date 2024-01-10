@@ -43,7 +43,7 @@ will start 10,000 simulations varying the planets' orbital inclinations with res
 
 ## Secular evolution
 
-The six `VPLanet` simulations in `secular-evolution/vplanet-sims` must first be run. Note that these are computationally expensive, and will require multiple weeks of wall clock time to finish. Then, running the script `proxima-b-evols.py` will produce the secular evolution figure from the paper.
+The six `VPLanet` simulations in `secular-evolution/vplanet-sims` must first be run. Note that these are computationally expensive, and will require multiple weeks of wall time to finish. Then, running the scripts `proxima-b-evols.py` and `proxima-evols.py` will produce in order the secular evolution figures from the paper.
 
 ## Using REBOUND
 
